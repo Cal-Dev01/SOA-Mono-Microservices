@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOA Demo</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">SOA Demo</h1>
+        <form id="orderForm" action="/order-details" method="get">
+            <div class="form-group">
+                <label for="order_id">Order ID:</label>
+                <input type="number" class="form-control" id="order_id" name="order_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Order Details</button>
+        </form>
+        <div id="result" class="mt-5">
+            <h2>Order Details (JSON)</h2>
+            <pre id="jsonResult"></pre>
+            <h2>Order Details (Formatted)</h2>
+            <table class="table table-bordered" id="formattedResult">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#orderForm').on('submit', function(e) {
+                e.preventDefault();
+                var orderId = $('#order_id').val();
+                $.getJSON('/order-details', { order_id: orderId }, function(data) {
+                    // Display JSON result
+                    $('#jsonResult').html(JSON.stringify(data, null, 2));
+
+                    // Display formatted result
+                    var formattedResult = $('#formattedResult tbody');
+                    formattedResult.empty(); // Clear previous results
+
+                    // Add Order details
+                    formattedResult.append('<tr><td>Order ID</td><td>' + orderId + '</td></tr>');
+                    formattedResult.append('<tr><td>Quantity</td><td>' + data.order.quantity + '</td></tr>');
+
+                    // Add User details
+                    formattedResult.append('<tr><td>User ID</td><td>' + data.order.user_id + '</td></tr>');
+                    formattedResult.append('<tr><td>User Name</td><td>' + data.user.name + '</td></tr>');
+                    formattedResult.append('<tr><td>User Age</td><td>' + data.user.age + '</td></tr>');
+
+                    // Add Product details
+                    formattedResult.append('<tr><td>Product ID</td><td>' + data.order.product_id + '</td></tr>');
+                    formattedResult.append('<tr><td>Product Name</td><td>' + data.product.name + '</td></tr>');
+                    formattedResult.append('<tr><td>Product Price</td><td>' + data.product.price + '</td></tr>');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
